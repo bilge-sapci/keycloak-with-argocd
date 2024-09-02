@@ -1,0 +1,117 @@
+# helm upgrade -i argocd -n argocd argo/argo-cd -f values.yaml --version 5.19.15
+nameOverride: "argocd"
+fullnameOverride: "argocd"
+
+kubeVersionOverride: "1.29.4"
+
+apiVersionOverrides:
+  # -- String to override apiVersion of cert-manager resources rendered by this helm chart
+  certmanager: "" # cert-manager.io/v1
+  # -- String to override apiVersion of GKE resources rendered by this helm chart
+  cloudgoogle: "" # cloud.google.com/v1
+  # -- String to override apiVersion of autoscaling rendered by this helm chart
+  autoscaling: "" # autoscaling/v2
+
+
+## Argo Configs
+configs:
+  # General Argo CD configuration
+  ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
+  cm:
+    create: true
+    exec.enabled: true
+  params:
+    server.insecure: true
+
+controller:
+  name: application-controller
+
+  resources: {}
+  #  limits:
+  #    cpu: 500m
+  #    memory: 512Mi
+  #  requests:
+  #    cpu: 250m
+  #    memory: 256Mi
+  #  metrics:
+  #    enabled: true
+  #    serviceMonitor:
+  #      enabled: true
+  #      selector:
+  #        release: utility-prometheus
+  affinity: {}
+
+dex:
+  #  metrics:
+  #    enabled: true
+  #    serviceMonitor:
+  #      enabled: true
+  #      selector:
+  #        release: utility-prometheus
+  affinity: {}
+
+
+## Redis
+redis: {}
+
+
+
+## Server
+server:
+  #  metrics:
+  #    enabled: true
+  #    serviceMonitor:
+  #      enabled: true
+  #      selector:
+  #        release: utility-prometheus
+  replicas: 2
+  service:
+    type: ClusterIP
+  certificateSecret:
+    enabled: false
+  extraArgs:
+  - --insecure
+  affinity: {}
+  ingress:
+    enabled: false
+    ingressClassName: nginx
+    annotations:
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+      external-dns.alpha.kubernetes.io/hostname: test.net
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    hosts:
+      - test.net
+    paths:
+      - /
+    https: false
+
+
+## Repo Server
+repoServer:
+  #  metrics:
+  #    enabled: true
+  #    serviceMonitor:
+  #      enabled: true
+  #      selector:
+  #        release: utility-prometheus
+  affinity: {}
+
+
+## ApplicationSet controller
+applicationSet:
+  # -- Enable ApplicationSet controller
+  enabled: true
+  #  metrics:
+  #    enabled: true
+  #    serviceMonitor:
+  #      enabled: true
+  #      selector:
+  #        release: utility-prometheus
+
+notifications:
+  enabled: false
+  #will be implemented later
+  name: notifications-controller
+
+  # -- Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates
+  argocdUrl: ""

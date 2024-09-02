@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-dev
+data:
+  realm1.json: |
+    {
+      "realm": "realm1",
+      "enabled": true,
+      "clients": [
+        {
+          "clientId": "my-client",
+          "secret": "my-secret",
+          "enabled": true,
+          "publicClient": false,
+          "redirectUris": ["https://my-app.com/*"]
+        }
+      ]
+    }
+  realm2.json: |
+    {
+      "realm": "realm2",
+      "enabled": true,
+      "clients": [
+        {
+          "clientId": "my-client",
+          "secret": "my-secret",
+          "enabled": true,
+          "publicClient": false,
+          "redirectUris": ["https://my-app.com/*"]
+        }
+      ]
+    }
+  realm3.json: |
+    {
+      "realm": "realm3",
+      "enabled": true,
+      "clients": [
+        {
+          "clientId": "my-client",
+          "secret": "my-secret",
+          "enabled": true,
+          "publicClient": false,
+          "redirectUris": ["https://my-app.com/*"]
+        }
+      ]
+    }
+  realm4.json: |
+    {
+      "realm": "realm4",
+      "enabled": true,
+      "clients": [
+        {
+          "clientId": "my-client",
+          "secret": "my-secret",
+          "enabled": true,
+          "publicClient": false,
+          "redirectUris": ["https://my-app.com/*"]
+        }
+      ]
+    }
+  realm5.json: |
+    {
+      "realm": "realm5",
+      "enabled": true,
+      "clients": [
+        {
+          "clientId": "my-client",
+          "secret": "my-secret",
+          "enabled": true,
+          "publicClient": false,
+          "redirectUris": ["https://my-app.com/*"]
+        }
+      ]
+    }
+
+# buradan oluşturulabiliyor ama buradan sildiğinde arayüzden gidip silmek lazım. realm settings den action kısmından delete demek lazım.
+# bu configmap i apply ladığında argocd den tekrardan sync leyip job ın çalışması lazım.
+# direkt keycloak arayüzünde değişiklik yansıyo.

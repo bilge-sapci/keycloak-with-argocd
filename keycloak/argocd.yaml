@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: keycloak
+  source:
+    repoURL: 'registry-1.docker.io/bitnamicharts'
+    path: 'keycloak'
+    targetRevision: 22.1.0
+    chart: keycloak
+    helm:
+      releaseName: keycloak
+      values: |
+        replicaCount: 1
+        nameOverride: "keycloak"
+        fullnameOverride: "keycloak"
+        adminRealm: "master"
+        auth:
+          adminUser: user
+          adminPassword: "W0DDGrCufz"
+        extraVolumes:
+          - name: keycloak-metrics-spi
+            configMap:
+              name: keycloak-metrics-spi
+        extraVolumeMounts:
+          - name: keycloak-metrics-spi
+            mountPath: /opt/keycloak/providers/keycloak-metrics-spi.jar
+            subPath: keycloak-metrics-spi.jar
+        # ilk defa kurarken postgresql alanini bos birakin, kurulum olduktan sonra keycloak un olusturdugu secret lari buraya yazmalisiniz. (her defasinda secretin degismemesi icin)    
+        postgresql:
+          enabled: true
+          auth:
+            postgresPassword: "OdzZbZuPv6"
+            username: bn_keycloak
+            password: "45vQbiJPYE"
+            database: bitnami_keycloak
+        metrics:
+          enabled: true
+          service:
+            ports:
+              http: 8080
+            annotations:
+              prometheus.io/scrape: "true"
+              prometheus.io/port: "{{ .Values.metrics.service.ports.http }}"
+          serviceMonitor:
+            enabled: true
+        production: true
+        proxyHeaders: "xforwarded"
+        keycloakConfigCli:
+          enabled: true
+          existingConfigmap: "config-dev"
+        logging:
+          output: default
+          level: WARN
